@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Menu Extension",
+  "version": "0.1",
+  "description": "Opens a generated page on command",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "open-menu": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "MacCtrl+Shift+Y"
+      },
+      "description": "Open the menu page"
+    }
+  },
+  "permissions": ["tabs"]
+}
