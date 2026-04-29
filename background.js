@@ -1,9 +1,13 @@
 chrome.commands.onCommand.addListener((command) => {
   if (command === "open-menu") {
-    const html = generateHTML();
-    chrome.tabs.create({ url: `data:text/html,${encodeURIComponent(html)}` });
+    openMenu();
   }
 });
+
+function openMenu() {
+  const html = generateHTML();
+  chrome.tabs.create({ url: `data:text/html,${encodeURIComponent(html)}` });
+}
 
 function generateHTML() {
   return `<!DOCTYPE html>
