@@ -13,7 +13,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.tabs.query({ windowId: menuWindowId }).then(tabs => {
       const filtered = tabs
         .filter(tab => tab.id !== menuTabId)
-        .map(tab => ({ id: tab.id, title: tab.title, url: tab.url }));
+        .map(tab => ({ id: tab.id, title: tab.title, url: tab.url, favIconUrl: tab.favIconUrl }));
       sendResponse(filtered);
     });
     return true; // keep message port open for async response

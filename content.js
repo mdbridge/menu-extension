@@ -5,11 +5,28 @@ if (root) {
 
   chrome.runtime.sendMessage({ action: 'getTabs' }, (tabs) => {
     root.innerHTML = '';
+
+    const h1 = document.createElement('h1');
+    h1.textContent = 'Click on the tab you want to switch to';
+    root.appendChild(h1);
+
     const ul = document.createElement('ul');
     for (const tab of tabs) {
       const li = document.createElement('li');
 
+      const entry = document.createElement('div');
+      entry.className = 'tab-entry';
+
+      const img = document.createElement('img');
+      img.className = 'tab-favicon';
+      img.src = tab.favIconUrl || '';
+      img.onerror = () => { img.style.visibility = 'hidden'; };
+
+      const info = document.createElement('div');
+      info.className = 'tab-info';
+
       const a = document.createElement('a');
+      a.className = 'tab-title';
       a.href = '#';
       a.textContent = tab.title || '(untitled)';
       a.dataset.tabId = tab.id;
@@ -22,11 +39,15 @@ if (root) {
         });
       });
 
-      const div = document.createElement('div');
-      div.textContent = tab.url;
+      const urlDiv = document.createElement('div');
+      urlDiv.className = 'tab-url';
+      urlDiv.textContent = tab.url;
 
-      li.appendChild(a);
-      li.appendChild(div);
+      info.appendChild(a);
+      info.appendChild(urlDiv);
+      entry.appendChild(img);
+      entry.appendChild(info);
+      li.appendChild(entry);
       ul.appendChild(li);
     }
     root.appendChild(ul);
