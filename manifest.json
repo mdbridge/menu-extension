@@ -15,5 +15,11 @@
       "description": "Open the menu page"
     }
   },
+  "content_scripts": [
+    {
+      "matches": ["file:///*/menu_extension/menu.html"],
+      "js": ["content.js"]
+    }
+  ],
   "permissions": ["tabs"]
 }
