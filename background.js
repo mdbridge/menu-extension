@@ -1,3 +1,5 @@
+const MENU_PAGE_URL = 'file:///C:/Users/Mark/Documents/menu_extension/menu.html';
+
 chrome.commands.onCommand.addListener((command) => {
   if (command === "open-menu") {
     openMenu();
@@ -5,22 +7,5 @@ chrome.commands.onCommand.addListener((command) => {
 });
 
 function openMenu() {
-  const html = generateHTML();
-  chrome.tabs.create({ url: `data:text/html,${encodeURIComponent(html)}` });
-}
-
-function generateHTML() {
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Menu</title>
-  <style>
-    body { font-family: sans-serif; padding: 2rem; }
-  </style>
-</head>
-<body>
-  <h1>Hello World</h1>
-</body>
-</html>`;
+  chrome.tabs.create({ url: MENU_PAGE_URL });
 }

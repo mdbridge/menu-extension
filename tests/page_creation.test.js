@@ -7,5 +7,5 @@ test('page creation opens a new tab with generated content', async ({ context, s
   ]);
 
   await newPage.waitForLoadState('domcontentloaded');
-  await expect(newPage.locator('h1')).toHaveText('Hello World');
+  await expect(newPage.locator('#__menu_extension_root__')).toBeVisible();
 });
