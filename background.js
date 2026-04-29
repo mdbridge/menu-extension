@@ -17,6 +17,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true; // keep message port open for async response
   }
+
+  if (message.action === 'switchTab') {
+    chrome.tabs.update(message.tabId, { active: true });
+    if (message.closeSource && sender.tab?.id) {
+      chrome.tabs.remove(sender.tab.id);
+    }
+  }
 });
 
 function openMenu() {
