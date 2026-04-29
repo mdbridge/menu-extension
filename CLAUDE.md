@@ -17,3 +17,22 @@ that the user identity is picked up correctly:
 
 Do NOT manually set `user.name` or `user.email` — the config file already
 contains the correct identity.
+
+# Node / npm / Playwright
+
+Node.js is installed at `C:\Program Files\nodejs\` but is not on the default
+bash PATH. Always add it before running node/npm/npx commands:
+
+    export PATH="$PATH:/c/Program Files/nodejs"
+
+To install dependencies:
+
+    export PATH="$PATH:/c/Program Files/nodejs" && cd "C:\Users\Mark\Documents\menu_extension" && npm install
+
+To install Playwright browsers (one-time):
+
+    export PATH="$PATH:/c/Program Files/nodejs" && npx playwright install chromium
+
+To run tests:
+
+    export PATH="$PATH:/c/Program Files/nodejs" && cd "C:\Users\Mark\Documents\menu_extension" && npx playwright test
