@@ -14,21 +14,33 @@
     }
 
     #__menu_extension_root__ {
-      max-width: 760px;
+      max-width: 1400px;
       margin: 0 auto;
     }
 
     #__menu_extension_root__ h1 {
-      font-size: 14px;
-      font-weight: 500;
-      color: #5f6368;
+      font-size: 16px;
+      font-weight: 600;
+      color: #202124;
       margin-bottom: 16px;
       padding-bottom: 12px;
+      padding-left: 1in;
       border-bottom: 1px solid #e0e0e0;
     }
 
     #__menu_extension_root__ ul {
       list-style: none;
+    }
+
+    @media (min-width: 760px) {
+      #__menu_extension_root__ ul {
+        column-count: 2;
+        column-gap: 24px;
+      }
+
+      #__menu_extension_root__ li {
+        break-inside: avoid;
+      }
     }
 
     #__menu_extension_root__ li {
@@ -43,15 +55,25 @@
     .tab-entry {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 10px;
       padding: 10px 12px;
+    }
+
+    .tab-favicon-wrapper {
+      width: 24px;
+      min-width: 24px;
+      height: 24px;
+      background: #ffffff;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
     }
 
     .tab-favicon {
       width: 16px;
       height: 16px;
-      margin-top: 2px;
-      flex-shrink: 0;
     }
 
     .tab-info {
@@ -81,6 +103,36 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #202124;
+        color: #e8eaed;
+      }
+
+      #__menu_extension_root__ h1 {
+        color: #e8eaed;
+        border-bottom-color: #3c4043;
+      }
+
+      #__menu_extension_root__ li:hover {
+        background: #2d2e30;
+      }
+
+      /* Dark wrapper so white/light favicons are visible */
+      .tab-favicon-wrapper {
+        background: #3c4043;
+      }
+
+      .tab-title {
+        color: #8ab4f8;
+      }
+
+      .tab-url {
+        color: #9aa0a6;
+      }
     }
   </style>
 </head>

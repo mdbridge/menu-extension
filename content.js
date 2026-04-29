@@ -17,10 +17,18 @@ if (root) {
       const entry = document.createElement('div');
       entry.className = 'tab-entry';
 
-      const img = document.createElement('img');
-      img.className = 'tab-favicon';
-      img.src = tab.favIconUrl || '';
-      img.onerror = () => { img.style.visibility = 'hidden'; };
+      const faviconWrapper = document.createElement('div');
+      faviconWrapper.className = 'tab-favicon-wrapper';
+      if (tab.favIconUrl) {
+        const img = document.createElement('img');
+        img.className = 'tab-favicon';
+        img.src = tab.favIconUrl;
+        img.onerror = () => { faviconWrapper.style.background = 'transparent'; };
+        faviconWrapper.appendChild(img);
+      } else {
+        faviconWrapper.style.background = 'transparent';
+      }
+      entry.appendChild(faviconWrapper);
 
       const info = document.createElement('div');
       info.className = 'tab-info';
@@ -45,7 +53,6 @@ if (root) {
 
       info.appendChild(a);
       info.appendChild(urlDiv);
-      entry.appendChild(img);
       entry.appendChild(info);
       li.appendChild(entry);
       ul.appendChild(li);
