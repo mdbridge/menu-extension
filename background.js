@@ -9,7 +9,8 @@ chrome.commands.onCommand.addListener((command) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'getTabs') {
     const menuTabId = sender.tab?.id;
-    chrome.tabs.query({}).then(tabs => {
+    const menuWindowId = sender.tab?.windowId;
+    chrome.tabs.query({ windowId: menuWindowId }).then(tabs => {
       const filtered = tabs
         .filter(tab => tab.id !== menuTabId)
         .map(tab => ({ id: tab.id, title: tab.title, url: tab.url }));
@@ -19,10 +20,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.action === 'switchTab') {
-    chrome.tabs.update(message.tabId, { active: true });
-    if (message.closeSource && sender.tab?.id) {
-      chrome.tabs.remove(sender.tab.id);
-    }
+    (async () => {
+      const targetTabId = message.tabId;
+      const targetTab = await chrome.tabs.get(targetTabId);
+      await chrome.tabs.update(targetTabId, { active: true });
+      await chrome.windows.update(targetTab.windowId, { focused: true });
+      if (message.closeSource && sender.tab?.id) {
+        await chrome.tabs.remove(sender.tab.id);
+        await chrome.tabs.update(targetTabId, { active: true });
+        await chrome.windows.update(targetTab.windowId, { focused: true });
+      }
+    })();
   }
 });
 

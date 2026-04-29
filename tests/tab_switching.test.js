@@ -4,6 +4,12 @@ test('clicking a tab switches to it and closes the menu', async ({ context, serv
   const targetPage = await context.newPage();
   await targetPage.goto('data:text/html,<title>Target Tab</title><body>target</body>');
 
+  // Decoy tab opened after target — this becomes the previously-active tab
+  // before the menu opens, so Chrome's default on menu-close would activate
+  // it rather than the target. Our code must beat that default.
+  const decoyPage = await context.newPage();
+  await decoyPage.goto('data:text/html,<title>Decoy Tab</title><body>decoy</body>');
+
   const [menuPage] = await Promise.all([
     context.waitForEvent('page'),
     serviceWorker.evaluate(() => openMenu()),
@@ -20,4 +26,5 @@ test('clicking a tab switches to it and closes the menu', async ({ context, serv
     chrome.tabs.query({ active: true })
   );
   expect(activeTabs.some(t => t.title === 'Target Tab')).toBe(true);
+  expect(activeTabs.some(t => t.title === 'Decoy Tab')).toBe(false);
 });
