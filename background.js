@@ -1,5 +1,8 @@
 const MENU_PAGE_URL = 'file:///C:/Users/Mark/Documents/menu_extension/menu.html';
 
+let previousTabId = null;
+let previousWindowId = null;
+
 chrome.commands.onCommand.addListener((command) => {
   if (command === "open-menu") {
     openMenu();
@@ -14,9 +17,29 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const filtered = tabs
         .filter(tab => tab.id !== menuTabId)
         .map(tab => ({ id: tab.id, title: tab.title, url: tab.url, favIconUrl: tab.favIconUrl }));
-      sendResponse(filtered);
+      sendResponse({ tabs: filtered, previousTabId });
     });
     return true; // keep message port open for async response
+  }
+
+  if (message.action === 'dismissMenu') {
+    (async () => {
+      if (previousTabId !== null) {
+        await chrome.tabs.update(previousTabId, { active: true }).catch(() => {});
+        if (previousWindowId !== null) {
+          await chrome.windows.update(previousWindowId, { focused: true }).catch(() => {});
+        }
+      }
+      if (sender.tab?.id) {
+        await chrome.tabs.remove(sender.tab.id);
+      }
+      if (previousTabId !== null) {
+        await chrome.tabs.update(previousTabId, { active: true }).catch(() => {});
+        if (previousWindowId !== null) {
+          await chrome.windows.update(previousWindowId, { focused: true }).catch(() => {});
+        }
+      }
+    })();
   }
 
   if (message.action === 'switchTab') {
@@ -34,6 +57,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-function openMenu() {
+async function openMenu() {
+  const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+  previousTabId = activeTab?.id ?? null;
+  previousWindowId = activeTab?.windowId ?? null;
   chrome.tabs.create({ url: MENU_PAGE_URL });
 }

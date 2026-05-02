@@ -1,9 +1,16 @@
 const root = document.getElementById('__menu_extension_root__');
 if (root) {
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      chrome.runtime.sendMessage({ action: 'dismissMenu' });
+    }
+  });
+
   const isMenuPage = window.location.protocol === 'file:' &&
                      window.location.pathname.endsWith('/menu_extension/menu.html');
 
-  chrome.runtime.sendMessage({ action: 'getTabs' }, (tabs) => {
+  chrome.runtime.sendMessage({ action: 'getTabs' }, ({ tabs, previousTabId }) => {
     root.innerHTML = '';
 
     const h1 = document.createElement('h1');
@@ -11,8 +18,10 @@ if (root) {
     root.appendChild(h1);
 
     const ul = document.createElement('ul');
+    let highlightedLi = null;
     for (const tab of tabs) {
       const li = document.createElement('li');
+      if (tab.id === previousTabId) highlightedLi = li;
 
       const entry = document.createElement('div');
       entry.className = 'tab-entry';
@@ -58,5 +67,10 @@ if (root) {
       ul.appendChild(li);
     }
     root.appendChild(ul);
+
+    if (highlightedLi) {
+      highlightedLi.classList.add('highlighted');
+      highlightedLi.scrollIntoView({ block: 'nearest' });
+    }
   });
 }
