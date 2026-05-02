@@ -1,9 +1,43 @@
 const root = document.getElementById('__menu_extension_root__');
 if (root) {
+  let highlightedLi = null;
+  let tabLis = [];
+
+  function setHighlight(li) {
+    if (highlightedLi) highlightedLi.classList.remove('highlighted');
+    highlightedLi = li;
+    if (li) {
+      li.classList.add('highlighted');
+      li.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       chrome.runtime.sendMessage({ action: 'dismissMenu' });
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      highlightedLi?.querySelector('a[data-tab-id]')?.click();
+    }
+    if (e.key === 'ArrowDown' && tabLis.length > 0) {
+      e.preventDefault();
+      const idx = tabLis.indexOf(highlightedLi);
+      setHighlight(tabLis[(idx + 1) % tabLis.length]);
+    }
+    if (e.key === 'ArrowUp' && tabLis.length > 0) {
+      e.preventDefault();
+      const idx = tabLis.indexOf(highlightedLi);
+      setHighlight(tabLis[(idx - 1 + tabLis.length) % tabLis.length]);
+    }
+    if (e.key === 'Home' && tabLis.length > 0) {
+      e.preventDefault();
+      setHighlight(tabLis[0]);
+    }
+    if (e.key === 'End' && tabLis.length > 0) {
+      e.preventDefault();
+      setHighlight(tabLis[tabLis.length - 1]);
     }
   });
 
@@ -18,10 +52,11 @@ if (root) {
     root.appendChild(h1);
 
     const ul = document.createElement('ul');
-    let highlightedLi = null;
+    let initialHighlight = null;
     for (const tab of tabs) {
       const li = document.createElement('li');
-      if (tab.id === previousTabId) highlightedLi = li;
+      tabLis.push(li);
+      if (tab.id === previousTabId) initialHighlight = li;
 
       const entry = document.createElement('div');
       entry.className = 'tab-entry';
@@ -68,9 +103,6 @@ if (root) {
     }
     root.appendChild(ul);
 
-    if (highlightedLi) {
-      highlightedLi.classList.add('highlighted');
-      highlightedLi.scrollIntoView({ block: 'nearest' });
-    }
+    if (initialHighlight) setHighlight(initialHighlight);
   });
 }
