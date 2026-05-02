@@ -1,4 +1,4 @@
-node_modules/
-test-results/
 .claude/
 local-config.json
+node_modules/
+test-results/
