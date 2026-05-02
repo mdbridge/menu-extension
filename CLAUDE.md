@@ -7,6 +7,11 @@ bash.  Always invoke it like this using the PowerShell tool:
 
   & "C:/cygwin64/bin/bash.exe" -lc '<command>'
 
+For multi-line content (e.g., commit messages), use the Write tool to
+write a temp file (e.g., `msg.txt~`), then reference it in the command;
+for example, `git commit -F msg.txt~`.  Do NOT try to embed newlines in
+the -lc string when using PowerShell as they split the bash command.
+
 # Git
 
 Always run git via Cygwin bash (see above).
