@@ -12,12 +12,31 @@ write a temp file (e.g., `msg.txt~`), then reference it in the command;
 for example, `git commit -F msg.txt~`.  Do NOT try to embed newlines in
 the -lc string when using PowerShell as they split the bash command.
 
+**`/cygdrive/` Cygwin paths are intermediate only.  Never use them as a
+final path or in any command — always convert to `~/...` form before
+use.**
+
+Do not assume what `~` resolves to in Cygwin.  At the start of a
+session, derive the repo's Cygwin path and its path relative to `~`:
+
+1. Convert the Windows project path from your session context to
+   forward slashes (backslashes are eaten in transit through
+   PowerShell).
+2. Using PowerShell, run `cygpath -u '<forward-slash-project-path>'`
+   via Cygwin bash to get the `/cygdrive/c/...` path.
+3. Using PowerShell, run `echo ~` via Cygwin bash to get the Cygwin
+   home directory.
+4. Express the repo path relative to `~` and use `~/...` paths for
+   all subsequent Cygwin bash commands.
+
+
 # Git
 
 Always run git via Cygwin bash (see above).
 
 Do NOT manually set `user.name` or `user.email` — the config file seen
 by Cygwin bash already contains the correct identity.
+
 
 # Node / npm / npx / Playwright
 
@@ -28,7 +47,7 @@ work:
 
 To install dependencies:
 
-    export PATH="$PATH:/c/Program Files/nodejs" && cd "C:\Users\Mark\Documents\menu_extension" && npm install
+    export PATH="$PATH:/c/Program Files/nodejs" && npm install
 
 To install Playwright browsers (one-time):
 
@@ -36,4 +55,4 @@ To install Playwright browsers (one-time):
 
 To run tests:
 
-    export PATH="$PATH:/c/Program Files/nodejs" && cd "C:\Users\Mark\Documents\menu_extension" && npx playwright test
+    export PATH="$PATH:/c/Program Files/nodejs" && npx playwright test
