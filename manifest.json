@@ -17,7 +17,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["file:///*/menu_extension/menu.html"],
+      "matches": ["file:///*menu_extension_menu_page.html"],
       "js": ["content.js"]
     }
   ],
