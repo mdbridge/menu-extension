@@ -31,19 +31,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'dismissMenu') {
     (async () => {
       if (previousTabId !== null) {
-        await chrome.tabs.update(previousTabId, { active: true }).catch(() => {});
-        if (previousWindowId !== null) {
-          await chrome.windows.update(previousWindowId, { focused: true }).catch(() => {});
-        }
+        await focusTab(previousTabId, previousWindowId);
       }
       if (sender.tab?.id) {
         await chrome.tabs.remove(sender.tab.id);
       }
       if (previousTabId !== null) {
-        await chrome.tabs.update(previousTabId, { active: true }).catch(() => {});
-        if (previousWindowId !== null) {
-          await chrome.windows.update(previousWindowId, { focused: true }).catch(() => {});
-        }
+        await focusTab(previousTabId, previousWindowId);
       }
     })();
   }
@@ -52,16 +46,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     (async () => {
       const targetTabId = message.tabId;
       const targetTab = await chrome.tabs.get(targetTabId);
-      await chrome.tabs.update(targetTabId, { active: true });
-      await chrome.windows.update(targetTab.windowId, { focused: true });
+      await focusTab(targetTabId, targetTab.windowId);
       if (message.closeSource && sender.tab?.id) {
         await chrome.tabs.remove(sender.tab.id);
-        await chrome.tabs.update(targetTabId, { active: true });
-        await chrome.windows.update(targetTab.windowId, { focused: true });
+        await focusTab(targetTabId, targetTab.windowId);
       }
     })();
   }
 });
+
+async function focusTab(tabId, windowId) {
+  await chrome.tabs.update(tabId, { active: true }).catch(() => {});
+  await chrome.windows.update(windowId, { focused: true }).catch(() => {});
+}
 
 async function openMenu() {
   await configReady;

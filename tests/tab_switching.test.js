@@ -1,4 +1,4 @@
-const { test, expect } = require('./fixtures');
+const { test, expect, openMenuPage } = require('./fixtures');
 
 test('clicking a tab switches to it and closes the menu', async ({ context, serviceWorker }) => {
   const targetPage = await context.newPage();
@@ -10,12 +10,7 @@ test('clicking a tab switches to it and closes the menu', async ({ context, serv
   const decoyPage = await context.newPage();
   await decoyPage.goto('data:text/html,<title>Decoy Tab</title><body>decoy</body>');
 
-  const [menuPage] = await Promise.all([
-    context.waitForEvent('page'),
-    serviceWorker.evaluate(() => openMenu()),
-  ]);
-  await menuPage.waitForLoadState('domcontentloaded');
-  await menuPage.waitForSelector('a[data-tab-id]');
+  const menuPage = await openMenuPage(context, serviceWorker);
 
   await Promise.all([
     menuPage.waitForEvent('close'),

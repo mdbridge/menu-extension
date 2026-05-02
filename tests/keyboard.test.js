@@ -1,4 +1,4 @@
-const { test, expect } = require('./fixtures');
+const { test, expect, openMenuPage } = require('./fixtures');
 
 test('enter selects the highlighted tab', async ({ context, serviceWorker }) => {
   const targetPage = await context.newPage();
@@ -12,12 +12,7 @@ test('enter selects the highlighted tab', async ({ context, serviceWorker }) => 
 
   await targetPage.bringToFront();
 
-  const [menuPage] = await Promise.all([
-    context.waitForEvent('page'),
-    serviceWorker.evaluate(() => openMenu()),
-  ]);
-  await menuPage.waitForLoadState('domcontentloaded');
-  await menuPage.waitForSelector('a[data-tab-id]');
+  const menuPage = await openMenuPage(context, serviceWorker);
 
   await Promise.all([
     menuPage.waitForEvent('close'),
@@ -36,12 +31,7 @@ test('esc closes the menu and returns to the previous tab', async ({ context, se
   await prevPage.goto('data:text/html,<title>Previous Tab</title><body>previous</body>');
   await prevPage.bringToFront();
 
-  const [menuPage] = await Promise.all([
-    context.waitForEvent('page'),
-    serviceWorker.evaluate(() => openMenu()),
-  ]);
-  await menuPage.waitForLoadState('domcontentloaded');
-  await menuPage.waitForSelector('a[data-tab-id]');
+  const menuPage = await openMenuPage(context, serviceWorker);
 
   await Promise.all([
     menuPage.waitForEvent('close'),

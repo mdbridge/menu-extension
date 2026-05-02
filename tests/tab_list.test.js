@@ -1,4 +1,4 @@
-const { test, expect } = require('./fixtures');
+const { test, expect, openMenuPage } = require('./fixtures');
 
 test('menu lists other open tabs', async ({ context, serviceWorker }) => {
   const tab1 = await context.newPage();
@@ -7,12 +7,7 @@ test('menu lists other open tabs', async ({ context, serviceWorker }) => {
   const tab2 = await context.newPage();
   await tab2.goto('data:text/html,<title>Test Tab Two</title><body>Tab 2</body>');
 
-  const [menuPage] = await Promise.all([
-    context.waitForEvent('page'),
-    serviceWorker.evaluate(() => openMenu()),
-  ]);
-
-  await menuPage.waitForLoadState('domcontentloaded');
+  const menuPage = await openMenuPage(context, serviceWorker);
 
   const root = menuPage.locator('#__menu_extension_root__');
   await expect(root.locator('a', { hasText: 'Test Tab One' })).toBeVisible();

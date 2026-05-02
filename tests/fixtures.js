@@ -25,4 +25,14 @@ const test = base.extend({
   },
 });
 
-module.exports = { test, expect: test.expect };
+async function openMenuPage(context, serviceWorker) {
+  const [menuPage] = await Promise.all([
+    context.waitForEvent('page'),
+    serviceWorker.evaluate(() => openMenu()),
+  ]);
+  await menuPage.waitForLoadState('domcontentloaded');
+  await menuPage.waitForSelector('a[data-tab-id]');
+  return menuPage;
+}
+
+module.exports = { test, expect: test.expect, openMenuPage };
