@@ -2,6 +2,7 @@
 cd /d "%~dp0"
 set "DIR=%~dp0"
 set "DIR=%DIR:\=/%"
-(echo {"MENU_PAGE_URL": "file:///%DIR%src/menu_extension_menu_page.html"})> local-config.json
+set "URL=file:///%DIR%src/menu_extension_menu_page.html"
+(echo {"MENU_PAGE_URL": "%URL%"})> local-config.json
 echo Setup complete.
-echo MENU_PAGE_URL = file:///%DIR%src/menu_extension_menu_page.html
+type local-config.json
