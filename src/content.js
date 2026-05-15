@@ -69,14 +69,20 @@ function makeLi(tab, onSelect, label) {
   return li;
 }
 
-function applyColumnLayout(ul) {
-  if (window.innerWidth < 760) return;
+function applyColumnLayout(ul, onReady) {
+  if (window.innerWidth < 760) {
+    onReady?.();
+    return;
+  }
   ul.style.columnFill = 'auto';
   ul.style.height = (window.innerHeight - 120) + 'px';
   requestAnimationFrame(() => {
     if (ul.scrollWidth > ul.clientWidth + 1) {
       ul.style.columnFill = '';
       ul.style.height = '';
+      requestAnimationFrame(() => onReady?.());
+    } else {
+      onReady?.();
     }
   });
 }
@@ -128,8 +134,7 @@ if (menuType === 'tabs') {
       ul.appendChild(li);
     }
     root.appendChild(ul);
-    applyColumnLayout(ul);
-    if (initialHighlight) setHighlight(initialHighlight);
+    applyColumnLayout(ul, () => { if (initialHighlight) setHighlight(initialHighlight); });
   });
 } else if (menuType === 'windows') {
   document.title = 'Window Menu';
@@ -151,8 +156,7 @@ if (menuType === 'tabs') {
       ul.appendChild(li);
     }
     root.appendChild(ul);
-    applyColumnLayout(ul);
-    if (initialHighlight) setHighlight(initialHighlight);
+    applyColumnLayout(ul, () => { if (initialHighlight) setHighlight(initialHighlight); });
   });
 }
 
