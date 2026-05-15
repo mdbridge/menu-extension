@@ -4,7 +4,7 @@
   "version": "0.2",
   "description": "Opens a generated page on command",
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
   "commands": {
     "open-tab-menu": {
@@ -25,7 +25,7 @@
   "content_scripts": [
     {
       "matches": ["file:///*menu_extension_menu_page.html?*"],
-      "js": ["content.js"]
+      "js": ["src/content.js"]
     }
   ],
   "permissions": ["tabs", "windows"]
