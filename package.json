@@ -1,6 +1,6 @@
 {
   "name": "menu-extension",
-  "version": "0.2",
+  "version": "0.9",
   "private": true,
   "type": "module",
   "scripts": {
