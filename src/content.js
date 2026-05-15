@@ -17,8 +17,15 @@ function setHighlight(li) {
   }
 }
 
-function makeLi(tab, onSelect) {
+function makeLi(tab, onSelect, label) {
   const li = document.createElement('li');
+
+  if (label !== undefined) {
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'window-label';
+    labelDiv.textContent = label;
+    li.appendChild(labelDiv);
+  }
 
   const entry = document.createElement('div');
   entry.className = 'tab-entry';
@@ -122,7 +129,8 @@ if (menuType === 'tabs') {
     for (const win of windows) {
       const li = makeLi(
         { id: win.tabId, title: win.title, url: win.url, favIconUrl: win.favIconUrl },
-        () => { chrome.runtime.sendMessage({ action: 'switchTab', tabId: win.tabId }); }
+        () => { chrome.runtime.sendMessage({ action: 'switchTab', tabId: win.tabId }); },
+        win.label
       );
       tabLis.push(li);
       if (win.isCurrent) initialHighlight = li;

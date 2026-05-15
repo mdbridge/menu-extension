@@ -41,6 +41,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           url: activeTab?.url ?? null,
           favIconUrl: activeTab?.favIconUrl ?? null,
           isCurrent: win.id === menuWindowId,
+          label: getWindowLabel(win.tabs),
         };
       });
       sendResponse({ windows });
@@ -69,6 +70,19 @@ async function closeMenuAndFocus(targetTabId, targetWindowId, menuTabId) {
   if (targetTabId !== null) await focusTab(targetTabId, targetWindowId);
   if (menuTabId) await chrome.tabs.remove(menuTabId);
   if (targetTabId !== null) await focusTab(targetTabId, targetWindowId);
+}
+
+function getWindowLabel(tabs) {
+  for (const tab of tabs) {
+    try {
+      const url = new URL(tab.url);
+      if (url.pathname.endsWith('echo_title.htm')) {
+        const title = url.searchParams.get('title');
+        if (title) return `[[${title}]]`;
+      }
+    } catch {}
+  }
+  return '';
 }
 
 async function openTabMenu() {

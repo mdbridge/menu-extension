@@ -50,6 +50,14 @@ body {
   box-shadow: 0 0 0 2px #1e8e3e;
 }
 
+.window-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5f6368;
+  padding: 6px 12px 0;
+  min-height: 1.5em;
+}
+
 .tab-entry {
   display: flex;
   align-items: flex-start;
@@ -133,6 +141,10 @@ body {
   }
 
   .tab-url {
+    color: #9aa0a6;
+  }
+
+  .window-label {
     color: #9aa0a6;
   }
 }
