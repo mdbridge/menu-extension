@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Menu Extension",
   "version": "0.2",
-  "description": "Opens a generated page on command",
+  "description": "Invokable menus for switching tabs and windows suitable for control by voice.",
   "background": {
     "service_worker": "src/background.js"
   },
