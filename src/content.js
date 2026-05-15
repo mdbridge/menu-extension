@@ -3,6 +3,13 @@
 const root = document.getElementById('__menu_extension_root__');
 if (!root) return;
 
+window.addEventListener('error', (e) => {
+  if (e.message && e.message.includes('Extension context invalidated')) {
+    e.preventDefault();
+    root.textContent = 'Menu Extension was updated — please close this tab and reopen the menu.';
+  }
+});
+
 const menuType = new URLSearchParams(window.location.search).get('type');
 
 let highlightedLi = null;
