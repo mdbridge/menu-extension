@@ -44,6 +44,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           label: getWindowLabel(win.tabs),
         };
       });
+      windows.sort((a, b) => {
+        if (a.label && b.label) return a.label.localeCompare(b.label);
+        if (a.label) return -1;
+        if (b.label) return 1;
+        return 0;
+      });
       sendResponse({ windows });
     });
     return true; // keep message port open for async response
