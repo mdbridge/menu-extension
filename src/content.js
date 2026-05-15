@@ -21,9 +21,10 @@ function makeLi(tab, onSelect, label) {
   const li = document.createElement('li');
 
   if (label !== undefined) {
+    li.classList.add('window-item');
     const labelDiv = document.createElement('div');
     labelDiv.className = 'window-label';
-    labelDiv.textContent = label;
+    labelDiv.textContent = label || 'no title';
     li.appendChild(labelDiv);
   }
 

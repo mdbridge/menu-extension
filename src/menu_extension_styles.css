@@ -51,11 +51,22 @@ body {
 }
 
 .window-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #5f6368;
+  font-size: 16px;
+  font-weight: 700;
+  color: #202124;
   padding: 6px 12px 0;
   min-height: 1.5em;
+}
+
+.window-item .tab-title {
+  font-size: 12px;
+  font-weight: 400;
+  color: #5f6368;
+}
+
+.window-item .tab-url {
+  font-size: 11px;
+  color: #9aa0a6;
 }
 
 .tab-entry {
@@ -145,6 +156,14 @@ body {
   }
 
   .window-label {
+    color: #e8eaed;
+  }
+
+  .window-item .tab-title {
     color: #9aa0a6;
+  }
+
+  .window-item .tab-url {
+    color: #5f6368;
   }
 }
