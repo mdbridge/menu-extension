@@ -1,4 +1,4 @@
-const { test, expect, openTabMenuPage } = require('../fixtures');
+import { test, expect, openTabMenuPage } from '../fixtures.js';
 
 test('page creation opens a new tab with generated content', async ({ context, serviceWorker }) => {
   const newPage = await openTabMenuPage(context, serviceWorker);

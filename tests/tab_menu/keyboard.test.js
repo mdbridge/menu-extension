@@ -1,4 +1,4 @@
-const { test, expect, openTabMenuPage } = require('../fixtures');
+import { test, expect, openTabMenuPage } from '../fixtures.js';
 
 test('enter selects the highlighted tab', async ({ context, serviceWorker }) => {
   const targetPage = await context.newPage();

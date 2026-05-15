@@ -1,7 +1,7 @@
-const { test: base, chromium } = require('@playwright/test');
-const path = require('path');
+import { test as base, chromium } from '@playwright/test';
+import { fileURLToPath } from 'url';
 
-const extensionPath = path.resolve(__dirname, '..');
+const extensionPath = fileURLToPath(new URL('..', import.meta.url));
 
 const test = base.extend({
   context: async ({}, use) => {
@@ -45,4 +45,6 @@ async function openWindowMenuPage(context, serviceWorker) {
   return menuPage;
 }
 
-module.exports = { test, expect: test.expect, openTabMenuPage, openWindowMenuPage };
+const expect = test.expect;
+
+export { test, expect, openTabMenuPage, openWindowMenuPage };

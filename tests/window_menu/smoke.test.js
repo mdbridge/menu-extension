@@ -1,4 +1,4 @@
-const { test, expect, openWindowMenuPage } = require('../fixtures');
+import { test, expect, openWindowMenuPage } from '../fixtures.js';
 
 test('window menu opens and shows one item per window', async ({ context, serviceWorker }) => {
   const menuPage = await openWindowMenuPage(context, serviceWorker);

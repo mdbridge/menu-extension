@@ -1,4 +1,4 @@
-const { test, expect, openTabMenuPage } = require('../fixtures');
+import { test, expect, openTabMenuPage } from '../fixtures.js';
 
 test('clicking a tab switches to it and closes the menu', async ({ context, serviceWorker }) => {
   const targetPage = await context.newPage();

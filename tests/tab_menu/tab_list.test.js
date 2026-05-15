@@ -1,4 +1,4 @@
-const { test, expect, openTabMenuPage } = require('../fixtures');
+import { test, expect, openTabMenuPage } from '../fixtures.js';
 
 test('menu lists other open tabs', async ({ context, serviceWorker }) => {
   const tab1 = await context.newPage();
