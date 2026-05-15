@@ -47,7 +47,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const targetTabId = message.tabId;
       const targetTab = await chrome.tabs.get(targetTabId);
       await focusTab(targetTabId, targetTab.windowId);
-      if (message.closeSource && sender.tab?.id) {
+      if (sender.tab?.id) {
         await chrome.tabs.remove(sender.tab.id);
         await focusTab(targetTabId, targetTab.windowId);
       }

@@ -41,9 +41,6 @@ if (root) {
     }
   });
 
-  const isMenuPage = window.location.protocol === 'file:' &&
-                     window.location.pathname.endsWith('menu_extension_menu_page.html');
-
   chrome.runtime.sendMessage({ action: 'getTabs' }, ({ tabs, previousTabId }) => {
     root.innerHTML = '';
 
@@ -87,7 +84,6 @@ if (root) {
         chrome.runtime.sendMessage({
           action: 'switchTab',
           tabId: tab.id,
-          closeSource: isMenuPage,
         });
       });
 
