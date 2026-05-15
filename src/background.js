@@ -7,7 +7,6 @@ const configReady = fetch(chrome.runtime.getURL('local-config.json'))
   .catch(() => {});
 
 let previousTabId = null;
-let previousWindowId = null;
 
 chrome.commands.onCommand.addListener((command) => {
   if (command === 'open-tab-menu') openTabMenu();
@@ -50,20 +49,35 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (b.label) return 1;
         return 0;
       });
-      sendResponse({ windows });
+      sendResponse({ windows, previousTabId });
     });
     return true; // keep message port open for async response
   }
 
   if (message.action === 'dismissMenu') {
-    closeMenuAndFocus(previousTabId, previousWindowId, sender.tab?.id);
+    (async () => {
+      if (message.prevTabId !== null) {
+        try {
+          const targetTab = await chrome.tabs.get(message.prevTabId);
+          await closeMenuAndFocus(message.prevTabId, targetTab.windowId, sender.tab?.id);
+          return;
+        } catch {}
+      }
+      if (sender.tab?.id) await chrome.tabs.remove(sender.tab.id);
+    })();
   }
 
   if (message.action === 'switchTab') {
     (async () => {
-      const targetTab = await chrome.tabs.get(message.tabId);
-      await closeMenuAndFocus(message.tabId, targetTab.windowId, sender.tab?.id);
+      try {
+        const targetTab = await chrome.tabs.get(message.tabId);
+        await closeMenuAndFocus(message.tabId, targetTab.windowId, sender.tab?.id);
+        sendResponse({});
+      } catch {
+        sendResponse({ error: 'That tab no longer exists.' });
+      }
     })();
+    return true;
   }
 });
 
@@ -99,7 +113,6 @@ async function openTabMenu() {
   }
   const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   previousTabId = activeTab?.id ?? null;
-  previousWindowId = activeTab?.windowId ?? null;
   chrome.tabs.create({ url: MENU_PAGE_URL + '?type=tabs' });
 }
 
@@ -111,6 +124,5 @@ async function openWindowMenu() {
   }
   const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   previousTabId = activeTab?.id ?? null;
-  previousWindowId = activeTab?.windowId ?? null;
   chrome.tabs.create({ url: MENU_PAGE_URL + '?type=windows' });
 }

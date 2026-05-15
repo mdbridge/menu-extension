@@ -14,6 +14,7 @@ const menuType = new URLSearchParams(window.location.search).get('type');
 
 let highlightedLi = null;
 let tabLis = [];
+let prevTabId = null;
 
 function setHighlight(li) {
   if (highlightedLi) highlightedLi.classList.remove('highlighted');
@@ -76,6 +77,18 @@ function makeLi(tab, onSelect, label) {
   return li;
 }
 
+function showError(msg) {
+  const existing = root.querySelector('.error-message');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.className = 'error-message';
+  div.textContent = msg;
+  const h1 = root.querySelector('h1');
+  if (h1) h1.insertAdjacentElement('afterend', div);
+  else root.insertBefore(div, root.firstChild);
+  setTimeout(() => div.remove(), 1000);
+}
+
 function applyColumnLayout(ul, onReady) {
   if (window.innerWidth < 760) {
     onReady?.();
@@ -97,7 +110,7 @@ function applyColumnLayout(ul, onReady) {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     e.preventDefault();
-    chrome.runtime.sendMessage({ action: 'dismissMenu' });
+    chrome.runtime.sendMessage({ action: 'dismissMenu', prevTabId });
   }
   if (e.key === 'Enter') {
     e.preventDefault();
@@ -126,6 +139,7 @@ document.addEventListener('keydown', (e) => {
 if (menuType === 'tabs') {
   document.title = 'Tab Menu';
   chrome.runtime.sendMessage({ action: 'getTabs' }, ({ tabs, previousTabId }) => {
+    prevTabId = previousTabId;
     root.innerHTML = '';
     const h1 = document.createElement('h1');
     h1.textContent = 'Click on the tab you want to switch to';
@@ -134,7 +148,9 @@ if (menuType === 'tabs') {
     let initialHighlight = null;
     for (const tab of tabs) {
       const li = makeLi(tab, () => {
-        chrome.runtime.sendMessage({ action: 'switchTab', tabId: tab.id });
+        chrome.runtime.sendMessage({ action: 'switchTab', tabId: tab.id }, (r) => {
+          if (r?.error) showError(r.error);
+        });
       });
       tabLis.push(li);
       if (tab.id === previousTabId) initialHighlight = li;
@@ -145,7 +161,8 @@ if (menuType === 'tabs') {
   });
 } else if (menuType === 'windows') {
   document.title = 'Window Menu';
-  chrome.runtime.sendMessage({ action: 'getWindows' }, ({ windows }) => {
+  chrome.runtime.sendMessage({ action: 'getWindows' }, ({ windows, previousTabId }) => {
+    prevTabId = previousTabId;
     root.innerHTML = '';
     const h1 = document.createElement('h1');
     h1.textContent = 'Click on the window you want to switch to';
@@ -155,7 +172,9 @@ if (menuType === 'tabs') {
     for (const win of windows) {
       const li = makeLi(
         { id: win.tabId, title: win.title, url: win.url, favIconUrl: win.favIconUrl },
-        () => { chrome.runtime.sendMessage({ action: 'switchTab', tabId: win.tabId }); },
+        () => { chrome.runtime.sendMessage({ action: 'switchTab', tabId: win.tabId }, (r) => {
+          if (r?.error) showError(r.error);
+        }); },
         win.label
       );
       tabLis.push(li);
