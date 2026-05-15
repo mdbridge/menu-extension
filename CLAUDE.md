@@ -30,6 +30,13 @@ session, derive the repo's Cygwin path and its path relative to `~`:
    all subsequent Cygwin bash commands.
 
 
+# Temporary files
+
+If you need a temporary file, put it in the top directory of the
+repository ending in a `~`; e.g., `command_output~`.  Do not put
+temporary files in `/tmp` .
+
+
 # Git
 
 Always run git via Cygwin bash (see above).
@@ -40,8 +47,8 @@ by Cygwin bash already contains the correct identity.
 
 # Node / npm / npx / Playwright
 
-These are run using git bash, but need the default path extended to
-work:
+These are run using git bash not Cygwin bash, but need the default path
+extended to work:
 
     export PATH="$PATH:/c/Program Files/nodejs"
 
