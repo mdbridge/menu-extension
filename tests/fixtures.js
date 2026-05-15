@@ -25,14 +25,24 @@ const test = base.extend({
   },
 });
 
-async function openMenuPage(context, serviceWorker) {
+async function openTabMenuPage(context, serviceWorker) {
   const [menuPage] = await Promise.all([
     context.waitForEvent('page'),
-    serviceWorker.evaluate(() => openMenu()),
+    serviceWorker.evaluate(() => openTabMenu()),
   ]);
   await menuPage.waitForLoadState('domcontentloaded');
   await menuPage.waitForSelector('a[data-tab-id]');
   return menuPage;
 }
 
-module.exports = { test, expect: test.expect, openMenuPage };
+async function openWindowMenuPage(context, serviceWorker) {
+  const [menuPage] = await Promise.all([
+    context.waitForEvent('page'),
+    serviceWorker.evaluate(() => openWindowMenu()),
+  ]);
+  await menuPage.waitForLoadState('domcontentloaded');
+  await menuPage.waitForSelector('a[data-tab-id]');
+  return menuPage;
+}
+
+module.exports = { test, expect: test.expect, openTabMenuPage, openWindowMenuPage };

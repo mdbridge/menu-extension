@@ -7,17 +7,24 @@
     "service_worker": "background.js"
   },
   "commands": {
-    "open-menu": {
+    "open-tab-menu": {
       "suggested_key": {
         "default": "Ctrl+Shift+Y",
         "mac": "MacCtrl+Shift+Y"
       },
-      "description": "Open the menu page"
+      "description": "Open the tab menu"
+    },
+    "open-window-menu": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X",
+        "mac": "MacCtrl+Shift+X"
+      },
+      "description": "Open the window menu"
     }
   },
   "content_scripts": [
     {
-      "matches": ["file:///*menu_extension_menu_page.html"],
+      "matches": ["file:///*menu_extension_menu_page.html?*"],
       "js": ["content.js"]
     }
   ],

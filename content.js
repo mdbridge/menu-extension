@@ -3,6 +3,8 @@
 const root = document.getElementById('__menu_extension_root__');
 if (!root) return;
 
+const menuType = new URLSearchParams(window.location.search).get('type');
+
 let highlightedLi = null;
 let tabLis = [];
 
@@ -88,26 +90,47 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-chrome.runtime.sendMessage({ action: 'getTabs' }, ({ tabs, previousTabId }) => {
-  root.innerHTML = '';
-
-  const h1 = document.createElement('h1');
-  h1.textContent = 'Click on the tab you want to switch to';
-  root.appendChild(h1);
-
-  const ul = document.createElement('ul');
-  let initialHighlight = null;
-  for (const tab of tabs) {
-    const li = makeLi(tab, () => {
-      chrome.runtime.sendMessage({ action: 'switchTab', tabId: tab.id });
-    });
-    tabLis.push(li);
-    if (tab.id === previousTabId) initialHighlight = li;
-    ul.appendChild(li);
-  }
-  root.appendChild(ul);
-
-  if (initialHighlight) setHighlight(initialHighlight);
-});
+if (menuType === 'tabs') {
+  document.title = 'Tab Menu';
+  chrome.runtime.sendMessage({ action: 'getTabs' }, ({ tabs, previousTabId }) => {
+    root.innerHTML = '';
+    const h1 = document.createElement('h1');
+    h1.textContent = 'Click on the tab you want to switch to';
+    root.appendChild(h1);
+    const ul = document.createElement('ul');
+    let initialHighlight = null;
+    for (const tab of tabs) {
+      const li = makeLi(tab, () => {
+        chrome.runtime.sendMessage({ action: 'switchTab', tabId: tab.id });
+      });
+      tabLis.push(li);
+      if (tab.id === previousTabId) initialHighlight = li;
+      ul.appendChild(li);
+    }
+    root.appendChild(ul);
+    if (initialHighlight) setHighlight(initialHighlight);
+  });
+} else if (menuType === 'windows') {
+  document.title = 'Window Menu';
+  chrome.runtime.sendMessage({ action: 'getWindows' }, ({ windows }) => {
+    root.innerHTML = '';
+    const h1 = document.createElement('h1');
+    h1.textContent = 'Click on the window you want to switch to';
+    root.appendChild(h1);
+    const ul = document.createElement('ul');
+    let initialHighlight = null;
+    for (const win of windows) {
+      const li = makeLi(
+        { id: win.tabId, title: win.title, url: win.url, favIconUrl: win.favIconUrl },
+        () => { chrome.runtime.sendMessage({ action: 'switchTab', tabId: win.tabId }); }
+      );
+      tabLis.push(li);
+      if (win.isCurrent) initialHighlight = li;
+      ul.appendChild(li);
+    }
+    root.appendChild(ul);
+    if (initialHighlight) setHighlight(initialHighlight);
+  });
+}
 
 })();
