@@ -115,7 +115,7 @@ function getWindowLabel(tabs) {
   return '';
 }
 
-async function openTabMenu() {
+async function openMenu(type) {
   await configReady;
   if (!MENU_PAGE_URL) {
     chrome.tabs.create({ url: chrome.runtime.getURL('setup-required.html') });
@@ -123,16 +123,8 @@ async function openTabMenu() {
   }
   const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   previousTabId = activeTab?.id ?? null;
-  chrome.tabs.create({ url: MENU_PAGE_URL + '?type=tabs' });
+  chrome.tabs.create({ url: MENU_PAGE_URL + '?type=' + type });
 }
 
-async function openWindowMenu() {
-  await configReady;
-  if (!MENU_PAGE_URL) {
-    chrome.tabs.create({ url: chrome.runtime.getURL('setup-required.html') });
-    return;
-  }
-  const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-  previousTabId = activeTab?.id ?? null;
-  chrome.tabs.create({ url: MENU_PAGE_URL + '?type=windows' });
-}
+async function openTabMenu() { await openMenu('tabs'); }
+async function openWindowMenu() { await openMenu('windows'); }
