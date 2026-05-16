@@ -63,3 +63,21 @@ To install Playwright browsers (one-time):
 To run tests:
 
     export PATH="$PATH:/c/Program Files/nodejs" && npx playwright test
+
+
+# Playwright test rules
+
+**Actions that close the menu page** must register the close listener
+before triggering the action, or the event can be missed:
+
+    await Promise.all([
+      menuPage.waitForEvent('close'),
+      menuPage.locator('...').click(),   // or keyboard.down(key)
+    ]);
+
+**Key presses that close the page** must use `keyboard.down` instead of
+`keyboard.press`.  `keyboard.press` sends keydown + keyup; if keydown
+causes the page to close, Playwright's attempt to send keyup to the
+dead page throws "Target page, context or browser has been closed".
+`keyboard.down` sends only keydown, which is all the content script's
+`keydown` listener needs.
