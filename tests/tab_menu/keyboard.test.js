@@ -16,7 +16,7 @@ test('enter selects the highlighted tab', async ({ context, serviceWorker }) => 
 
   await Promise.all([
     menuPage.waitForEvent('close'),
-    menuPage.keyboard.press('Enter'),
+    menuPage.keyboard.down('Enter'),
   ]);
 
   const activeTabs = await serviceWorker.evaluate(() =>
@@ -35,7 +35,7 @@ test('esc closes the menu and returns to the previous tab', async ({ context, se
 
   await Promise.all([
     menuPage.waitForEvent('close'),
-    menuPage.keyboard.press('Escape'),
+    menuPage.keyboard.down('Escape'),
   ]);
 
   const activeTabs = await serviceWorker.evaluate(() =>

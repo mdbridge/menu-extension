@@ -91,14 +91,10 @@ test('esc when previous tab no longer exists just closes the window menu',
 
     const menuPage = await openWindowMenuPage(context, serviceWorker);
 
-    // Use Chrome's API rather than prevPage.close() to avoid a Playwright side-effect
-    // that closes the menu page when prevPage is closed.
-    await serviceWorker.evaluate(async () => {
-      if (previousTabId !== null) await chrome.tabs.remove(previousTabId);
-    });
+    await prevPage.close();
 
     await Promise.all([
       menuPage.waitForEvent('close'),
-      menuPage.keyboard.press('Escape'),
+      menuPage.keyboard.down('Escape'),
     ]);
   });
