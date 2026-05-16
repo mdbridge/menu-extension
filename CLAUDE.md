@@ -7,13 +7,16 @@ bash.  Always invoke it like this using the PowerShell tool:
 
   & "C:/cygwin64/bin/bash.exe" -lc '<command>'
 
-For multi-line content (e.g., commit messages), use the Write tool to
-write a temp file (e.g., `msg.txt~`), then reference it in the command;
-for example, `git commit -F msg.txt~`.  Do NOT try to embed newlines in
-the -lc string when using PowerShell as they split the bash command.
+**Avoid double quotes inside the `-lc` string.**  PowerShell 5.1 mangles
+double quotes when passing arguments to native executables, so any
+double quote inside the `-lc` string gets eaten before bash sees it --
+the message gets truncated or lost entirely.
+
+If any argument requires quoting (e.g., a grep pattern with spaces),
+write the value to a temporary file instead.
 
 **`/cygdrive/` Cygwin paths are intermediate only.  Never use them as a
-final path or in any command — always convert to `~/...` form before
+final path or in any command -- always convert to `~/...` form before
 use.**
 
 Do not assume what `~` resolves to in Cygwin.  At the start of a
@@ -41,8 +44,12 @@ temporary files in `/tmp` .
 
 Always run git via Cygwin bash (see above).
 
-Do NOT manually set `user.name` or `user.email` — the config file seen
+Do NOT manually set `user.name` or `user.email` -- the config file seen
 by Cygwin bash already contains the correct identity.
+
+**Never use `git commit -m "..."`.**  Always write the message to a temp
+file using the Write tool (e.g., `msg.txt~`), then reference it in the
+command; for example, `git commit -F msg.txt~`.
 
 
 # Node / npm / npx / Playwright
@@ -81,3 +88,10 @@ causes the page to close, Playwright's attempt to send keyup to the
 dead page throws "Target page, context or browser has been closed".
 `keyboard.down` sends only keydown, which is all the content script's
 `keydown` listener needs.
+
+
+# Coding conventions
+
+Attempt to keep source code lines shorter than 100 characters.
+
+`e.g.` and `i.e.` are always followed by commas.
