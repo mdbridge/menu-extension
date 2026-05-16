@@ -100,7 +100,6 @@ async function focusTab(tabId, windowId) {
 async function closeMenuAndFocus(targetTabId, targetWindowId, menuTabId) {
   if (targetTabId !== null) await focusTab(targetTabId, targetWindowId);
   if (menuTabId) await chrome.tabs.remove(menuTabId);
-  if (targetTabId !== null) await focusTab(targetTabId, targetWindowId);
 }
 
 function getWindowLabel(tabs) {
