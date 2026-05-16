@@ -44,10 +44,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         };
       });
       windows.sort((a, b) => {
-        if (a.label && b.label) return a.label.localeCompare(b.label);
-        if (a.label) return -1;
-        if (b.label) return 1;
-        return 0;
+        if (a.label !== b.label) {
+          if (!a.label) return 1;
+          if (!b.label) return -1;
+          const cmp = a.label.localeCompare(b.label);
+          if (cmp !== 0) return cmp;
+        }
+        return (a.title ?? '').localeCompare(b.title ?? '') ||
+               (a.url ?? '').localeCompare(b.url ?? '');
       });
       sendResponse({ windows, previousTabId });
     });
