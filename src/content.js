@@ -1,7 +1,6 @@
-(function() {
-
 const root = document.getElementById('__menu_extension_root__');
-if (!root) return;
+
+if (root) {
 
 window.addEventListener('error', (e) => {
   if (e.message && e.message.includes('Extension context invalidated')) {
@@ -13,7 +12,7 @@ window.addEventListener('error', (e) => {
 const menuType = new URLSearchParams(window.location.search).get('type');
 
 let highlightedLi = null;
-let tabLis = [];
+let menuItemLis = [];
 let prevTabId = null;
 
 function setHighlight(li) {
@@ -25,10 +24,10 @@ function setHighlight(li) {
   }
 }
 
-function makeLi(tab, onSelect, label) {
+function makeLi(tab, onSelect, isWindowItem, label) {
   const li = document.createElement('li');
 
-  if (label !== undefined) {
+  if (isWindowItem) {
     li.classList.add('window-item');
     const labelDiv = document.createElement('div');
     labelDiv.className = 'window-label';
@@ -107,6 +106,23 @@ function applyColumnLayout(ul, onReady) {
   });
 }
 
+function renderMenu(title, items, makeItem) {
+  root.innerHTML = '';
+  const h1 = document.createElement('h1');
+  h1.textContent = title;
+  root.appendChild(h1);
+  const ul = document.createElement('ul');
+  let initialHighlight = null;
+  for (const item of items) {
+    const { li, highlight } = makeItem(item);
+    menuItemLis.push(li);
+    if (highlight) initialHighlight = li;
+    ul.appendChild(li);
+  }
+  root.appendChild(ul);
+  applyColumnLayout(ul, () => { if (initialHighlight) setHighlight(initialHighlight); });
+}
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     e.preventDefault();
@@ -116,23 +132,23 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault();
     highlightedLi?.querySelector('a[data-tab-id]')?.click();
   }
-  if (e.key === 'ArrowDown' && tabLis.length > 0) {
+  if (e.key === 'ArrowDown' && menuItemLis.length > 0) {
     e.preventDefault();
-    const idx = tabLis.indexOf(highlightedLi);
-    setHighlight(tabLis[(idx + 1) % tabLis.length]);
+    const idx = menuItemLis.indexOf(highlightedLi);
+    setHighlight(menuItemLis[(idx + 1) % menuItemLis.length]);
   }
-  if (e.key === 'ArrowUp' && tabLis.length > 0) {
+  if (e.key === 'ArrowUp' && menuItemLis.length > 0) {
     e.preventDefault();
-    const idx = tabLis.indexOf(highlightedLi);
-    setHighlight(tabLis[(idx - 1 + tabLis.length) % tabLis.length]);
+    const idx = menuItemLis.indexOf(highlightedLi);
+    setHighlight(menuItemLis[(idx - 1 + menuItemLis.length) % menuItemLis.length]);
   }
-  if (e.key === 'Home' && tabLis.length > 0) {
+  if (e.key === 'Home' && menuItemLis.length > 0) {
     e.preventDefault();
-    setHighlight(tabLis[0]);
+    setHighlight(menuItemLis[0]);
   }
-  if (e.key === 'End' && tabLis.length > 0) {
+  if (e.key === 'End' && menuItemLis.length > 0) {
     e.preventDefault();
-    setHighlight(tabLis[tabLis.length - 1]);
+    setHighlight(menuItemLis[menuItemLis.length - 1]);
   }
 });
 
@@ -140,37 +156,21 @@ if (menuType === 'tabs') {
   document.title = 'Tab Menu';
   chrome.runtime.sendMessage({ action: 'getTabs' }, ({ tabs, previousTabId }) => {
     prevTabId = previousTabId;
-    root.innerHTML = '';
-    const h1 = document.createElement('h1');
-    h1.textContent = 'Click on the tab you want to switch to';
-    root.appendChild(h1);
-    const ul = document.createElement('ul');
-    let initialHighlight = null;
-    for (const tab of tabs) {
-      const li = makeLi(tab, () => {
+    renderMenu('Click on the tab you want to switch to', tabs, (tab) => ({
+      li: makeLi(tab, () => {
         chrome.runtime.sendMessage({ action: 'switchTab', tabId: tab.id }, (r) => {
           if (r?.error) showError(r.error);
         });
-      });
-      tabLis.push(li);
-      if (tab.id === previousTabId) initialHighlight = li;
-      ul.appendChild(li);
-    }
-    root.appendChild(ul);
-    applyColumnLayout(ul, () => { if (initialHighlight) setHighlight(initialHighlight); });
+      }, false),
+      highlight: tab.id === previousTabId,
+    }));
   });
 } else if (menuType === 'windows') {
   document.title = 'Window Menu';
   chrome.runtime.sendMessage({ action: 'getWindows' }, ({ windows, previousTabId }) => {
     prevTabId = previousTabId;
-    root.innerHTML = '';
-    const h1 = document.createElement('h1');
-    h1.textContent = 'Click on the window you want to switch to';
-    root.appendChild(h1);
-    const ul = document.createElement('ul');
-    let initialHighlight = null;
-    for (const win of windows) {
-      const li = makeLi(
+    renderMenu('Click on the window you want to switch to', windows, (win) => ({
+      li: makeLi(
         { id: win.tabId, title: win.title, url: win.url, favIconUrl: win.favIconUrl },
         () => {
           chrome.runtime.sendMessage(
@@ -179,15 +179,12 @@ if (menuType === 'tabs') {
             }
           );
         },
-        win.label
-      );
-      tabLis.push(li);
-      if (win.isCurrent) initialHighlight = li;
-      ul.appendChild(li);
-    }
-    root.appendChild(ul);
-    applyColumnLayout(ul, () => { if (initialHighlight) setHighlight(initialHighlight); });
+        true,
+        win.label,
+      ),
+      highlight: win.isCurrent,
+    }));
   });
 }
 
-})();
+} // if (root)
