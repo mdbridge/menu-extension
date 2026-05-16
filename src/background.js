@@ -80,7 +80,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             if (sender.tab?.id) await chrome.tabs.remove(sender.tab.id);
             sendResponse({});
             return;
-          } catch {}
+          } catch {
+            sendResponse({ error: 'That window no longer exists.' });
+            return;
+          }
         }
         sendResponse({ error: 'That tab no longer exists.' });
       }
