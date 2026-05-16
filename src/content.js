@@ -172,9 +172,13 @@ if (menuType === 'tabs') {
     for (const win of windows) {
       const li = makeLi(
         { id: win.tabId, title: win.title, url: win.url, favIconUrl: win.favIconUrl },
-        () => { chrome.runtime.sendMessage({ action: 'switchTab', tabId: win.tabId }, (r) => {
-          if (r?.error) showError(r.error);
-        }); },
+        () => {
+          chrome.runtime.sendMessage(
+            { action: 'switchTab', tabId: win.tabId, windowId: win.windowId }, (r) => {
+              if (r?.error) showError(r.error);
+            }
+          );
+        },
         win.label
       );
       tabLis.push(li);

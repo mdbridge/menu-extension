@@ -1,6 +1,6 @@
 import { test, expect, openWindowMenuPage } from '../fixtures.js';
 
-test('clicking current window entry when its previous tab no longer exists shows an error',
+test('clicking current window entry when its previous tab no longer exists closes the menu',
   async ({ context, serviceWorker }) => {
     const prevPage = await context.newPage();
     await prevPage.goto('data:text/html,<title>Previous Tab</title><body>prev</body>');
@@ -9,13 +9,13 @@ test('clicking current window entry when its previous tab no longer exists shows
     const menuPage = await openWindowMenuPage(context, serviceWorker);
     await prevPage.close();
 
-    await menuPage.locator('a[data-tab-id]').click();
-
-    await expect(menuPage.locator('.error-message')).toBeVisible();
-    expect(menuPage.isClosed()).toBe(false);
+    await Promise.all([
+      menuPage.waitForEvent('close'),
+      menuPage.locator('a[data-tab-id]').click(),
+    ]);
   });
 
-test('clicking a different-window entry whose active tab no longer exists shows an error',
+test('clicking a different-window entry whose active tab no longer exists closes the menu and focuses that window',
   async ({ context, serviceWorker }) => {
     const originalWindowId = await serviceWorker.evaluate(async () =>
       (await chrome.windows.getLastFocused({ windowTypes: ['normal'] })).id
@@ -23,8 +23,8 @@ test('clicking a different-window entry whose active tab no longer exists shows 
 
     // Create second window with two tabs: extra tab first, then the active one.
     // The active tab (created last) is the one the menu will display for this window,
-    // and the one we'll close to trigger the error.
-    const [, , { activeTabId }] = await Promise.all([
+    // and the one we'll close to trigger the fallback.
+    const [, , { activeTabId, secondWindowId }] = await Promise.all([
       context.waitForEvent('page'), // extra tab (from windows.create)
       context.waitForEvent('page'), // active tab (from tabs.create)
       serviceWorker.evaluate(async () => {
@@ -32,7 +32,7 @@ test('clicking a different-window entry whose active tab no longer exists shows 
         const tab = await chrome.tabs.create(
           { windowId: win.id, url: 'about:blank', active: true }
         );
-        return { activeTabId: tab.id };
+        return { activeTabId: tab.id, secondWindowId: win.id };
       }),
     ]);
 
@@ -47,10 +47,15 @@ test('clicking a different-window entry whose active tab no longer exists shows 
     await serviceWorker.evaluate((id) => chrome.tabs.remove(id), activeTabId);
 
     await menuPage.waitForSelector('li.highlighted');
-    await menuPage.locator('li:not(.highlighted) a[data-tab-id]').click();
+    await Promise.all([
+      menuPage.waitForEvent('close'),
+      menuPage.locator('li:not(.highlighted) a[data-tab-id]').click(),
+    ]);
 
-    await expect(menuPage.locator('.error-message')).toBeVisible();
-    expect(menuPage.isClosed()).toBe(false);
+    const focusedWindowId = await serviceWorker.evaluate(async () =>
+      (await chrome.windows.getLastFocused({ windowTypes: ['normal'] })).id
+    );
+    expect(focusedWindowId).toBe(secondWindowId);
   });
 
 test('clicking a window entry whose window no longer exists shows an error',

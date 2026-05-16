@@ -74,6 +74,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         await closeMenuAndFocus(message.tabId, targetTab.windowId, sender.tab?.id);
         sendResponse({});
       } catch {
+        if (message.windowId != null) {
+          try {
+            await chrome.windows.update(message.windowId, { focused: true });
+            if (sender.tab?.id) await chrome.tabs.remove(sender.tab.id);
+            sendResponse({});
+            return;
+          } catch {}
+        }
         sendResponse({ error: 'That tab no longer exists.' });
       }
     })();
