@@ -2,8 +2,8 @@
 
 On **Linux**, run shell commands normally.
 
-On **Windows**, `make`, `git`, and similar Unix tools require Cygwin
-bash.  Always invoke it like this using the PowerShell tool:
+On **Windows**, `make` and similar Unix tools require Cygwin bash.
+Always invoke it like this using the PowerShell tool:
 
   & "C:/cygwin64/bin/bash.exe" -lc '<command>'
 
@@ -15,22 +15,15 @@ the message gets truncated or lost entirely.
 If any argument requires quoting (e.g., a grep pattern with spaces),
 write the value to a temporary file instead.
 
+**Never pass Windows-style paths (e.g., `C:/...` or `C:\...`) to Cygwin
+bash commands.**  Convert any Windows path to `~/...` form: first run
+`echo $HOME` in Cygwin bash to learn the mapping, then derive the
+equivalent `~/...` path.  Run `echo $HOME` once per conversation;
+never assume `~` maps to the Windows user profile directory.
+
 **`/cygdrive/` Cygwin paths are intermediate only.  Never use them as a
 final path or in any command -- always convert to `~/...` form before
 use.**
-
-Do not assume what `~` resolves to in Cygwin.  At the start of a
-session, derive the repo's Cygwin path and its path relative to `~`:
-
-1. Convert the Windows project path from your session context to
-   forward slashes (backslashes are eaten in transit through
-   PowerShell).
-2. Using PowerShell, run `cygpath -u '<forward-slash-project-path>'`
-   via Cygwin bash to get the `/cygdrive/c/...` path.
-3. Using PowerShell, run `echo ~` via Cygwin bash to get the Cygwin
-   home directory.
-4. Express the repo path relative to `~` and use `~/...` paths for
-   all subsequent Cygwin bash commands.
 
 
 # Temporary files
@@ -42,14 +35,7 @@ temporary files in `/tmp` .
 
 # Git
 
-Always run git via Cygwin bash (see above).
-
-Do NOT manually set `user.name` or `user.email` -- the config file seen
-by Cygwin bash already contains the correct identity.
-
-**Never use `git commit -m "..."`.**  Always write the message to a temp
-file using the Write tool (e.g., `msg.txt~`), then reference it in the
-command; for example, `git commit -F msg.txt~`.
+On Windows, always run git via git bash.
 
 
 # Node / npm / npx / Playwright
