@@ -13,13 +13,12 @@ double quote inside the `-lc` string gets eaten before bash sees it --
 the message gets truncated or lost entirely.
 
 If any argument requires quoting (e.g., a grep pattern with spaces),
-write the value to a temporary file instead.
+write the value to a temporary file then reference that file in the
+command instead.
 
-**Never pass Windows-style paths (e.g., `C:/...` or `C:\...`) to Cygwin
-bash commands.**  Convert any Windows path to `~/...` form: first run
-`echo $HOME` in Cygwin bash to learn the mapping, then derive the
-equivalent `~/...` path.  Run `echo $HOME` once per conversation;
-never assume `~` maps to the Windows user profile directory.
+Before using Cygwin bash, you MUST determine what directory `~` refers
+by running `echo ~` in either bash.  Never simply assume that `~` refers
+to the Windows user profile directory.
 
 **`/cygdrive/` Cygwin paths are intermediate only.  Never use them as a
 final path or in any command -- always convert to `~/...` form before
