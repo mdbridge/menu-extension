@@ -49,6 +49,7 @@ provided in this repository.
    - Edge: `edge://extensions`
 4. Enable **Developer mode**.
 5. Click **Load unpacked** and select the extension folder.
+6. On Edge, you may need to manually set the extension keyboard shortcuts.
 
 If you move the extension folder to a different location, run
 `setup.bat` again and reload the extension.
