@@ -39,7 +39,7 @@ provided in this repository.
 | End | Highlight the last tab/window |
 
 
-## Sample screenshots
+## Sample screenshots (dark mode)
 
 ![Screenshot of a tab menu in dark mode with click-by-voice active](screenshots/tab_menu_in_dark_mode.png)
 ![Screenshot of a window menu in dark mode with click-by-voice active](screenshots/window_menu_in_dark_mode.png)
