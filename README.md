@@ -39,6 +39,11 @@ provided in this repository.
 | End | Highlight the last tab/window |
 
 
+## Sample screenshots
+
+![Screenshots of a tab menu in dark mode with click-by-voice active](screenshots/tab_menu_in_dark_mode.png)
+
+
 ## Installation
 
 1. Clone or download this repository.
