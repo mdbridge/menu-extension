@@ -77,4 +77,4 @@ npx playwright test
 ## Authorship and licensing
 
 This extension was vibe coded by Mark Lillibridge using Claude code CLI;
-I place it in the public domain.
+he places it in the public domain.

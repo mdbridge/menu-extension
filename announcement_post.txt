@@ -1,0 +1,9 @@
+FYI: New browser extension for switching browser tab/windows using click-by-voice
+
+For a while now, I have wanted a display "table of contents" for browser tabs ability.  That is, you issue a voice command and a fresh browser tab pops up with a list of all the other browser tabs in the current window.  You can then issue another voice command to pick a tab or dispel the table of contents.
+
+I'm pretty sure there are existing extensions that can do this except that they assume you can use the mouse to click on the tab you want.  No problem you say, just use click-by-voice to pick the tab.   Unfortunately, that does not work because click-by-voice, like other extensions, cannot run on other extensions' pages.
+
+I have solved this problem by vibe coding a new extension, Menu extension, that lets you create such table of contents tabs that are normal non-extension pages.  This allows you to use click-by-voice or a similar extension on them to select the tab you want.  While I was at it, I also added a table of contents for all the windows belonging to the current browser so you can easily switch between those as well.
+
+I don't have time to maintain or polish this for others so I just put it up as a GitHub repository at https://github.com/mdbridge/menu-extension; if you don't have much software experience, one of the AIs can likely guide you through setting it up.  This code is in the public domain if someone would like to improve or better package it.
