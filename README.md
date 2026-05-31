@@ -3,7 +3,7 @@
 A browser extension for Chrome and Edge that allows opening a mouse and
 keyboard navigable tab or window switcher with a single keystroke.
 Importantly, the switchers are file:/// URLs so they can be used with
-other extensions like Click-by-Voice.
+other extensions like Click-by-Voice or Rango.
 
 
 ## How to use it
