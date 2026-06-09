@@ -63,6 +63,7 @@ if (root) {
       e.preventDefault();
       onSelect();
     });
+    a.addEventListener('focus', () => setHighlight(li));
 
     const urlDiv = document.createElement('div');
     urlDiv.className = 'tab-url';
